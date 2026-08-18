@@ -1,0 +1,924 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+	min-height: 100dvh;
+
+    font-family:
+        "Yu Gothic",
+        "Hiragino Kaku Gothic ProN",
+        sans-serif;
+    color: #ffffff;
+    background:
+        linear-gradient(
+            160deg,
+            #17152f 0%,
+            #332454 55%,
+            #622d62 100%
+        );
+}
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid #ffd2e2;
+    outline-offset: 3px;
+}
+
+
+.container {
+    width: min(100%, 480px);
+    min-height: 100vh;
+	min-height: 100dvh;
+    margin: 0 auto;
+    padding: 100px 24px 40px;
+    text-align: center;
+}
+
+.subtitle {
+    margin-bottom: 8px;
+    color: #efb5d1;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+}
+
+h1 {
+    margin: 0 0 24px;
+    font-size: 42px;
+}
+
+.description {
+    margin-bottom: 48px;
+    color: #ebe4ef;
+    line-height: 1.8;
+}
+
+.start-button {
+    display: block;
+    width: 100%;
+    padding: 17px;
+    border-radius: 18px;
+    color: #ffffff;
+    background: #ed5d91;
+    box-shadow:
+        0 8px 24px rgb(237 93 145 / 35%);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
+
+.development {
+    margin-top: 32px;
+    color: #c9bfd0;
+    font-size: 12px;
+}
+.game-container {
+    padding-top: 48px;
+    text-align: left;
+}
+
+.game-header {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.card-section {
+    margin-bottom: 40px;
+}
+
+.card-section h2 {
+    margin: 0 0 14px;
+    font-size: 18px;
+}
+
+.help-text {
+    margin: -4px 0 14px;
+    color: #c9bfd0;
+    font-size: 13px;
+}
+
+
+.sub-button {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border: 1px solid rgb(255 255 255 / 35%);
+    border-radius: 18px;
+    color: #ffffff;
+    background: rgb(255 255 255 / 10%);
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+}
+/* =========================
+   スマートフォン用カード画面
+   ========================= */
+
+body.modal-open {
+    overflow: hidden;
+}
+
+.screen-guide {
+    margin: -8px 0 0;
+    color: #c9bfd0;
+    font-size: 13px;
+}
+/* =========================
+   告白相手の名前入力
+   ========================= */
+
+.recipient-section {
+    margin-bottom: 36px;
+    padding: 18px;
+    border: 1px solid rgb(255 255 255 / 20%);
+    border-radius: 20px;
+    background: rgb(255 255 255 / 8%);
+}
+
+.recipient-label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.recipient-input {
+    display: block;
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 14px;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    color: #33233b;
+    background: #ffffff;
+    font-size: 16px;
+    outline: none;
+}
+
+.recipient-input:focus {
+    border-color: #ed5d91;
+    box-shadow:
+        0 0 0 4px rgb(237 93 145 / 20%);
+}
+
+.recipient-input::placeholder {
+    color: #a99da7;
+}
+
+.recipient-help {
+    margin: 9px 0 0;
+    color: #c9bfd0;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+
+.section-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.section-title-row h2 {
+    margin: 0;
+}
+
+.selection-rule {
+    flex-shrink: 0;
+    padding: 5px 9px;
+    border-radius: 999px;
+    color: #ffd2e2;
+    background: rgb(237 93 145 / 20%);
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.card-table {
+    margin: 0 -20px;
+    padding: 8px 0;
+    overflow: hidden;
+}
+
+.card-hand {
+    display: flex;
+    align-items: center;
+    min-height: 230px;
+    padding: 22px 28px 30px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    touch-action: pan-x;
+}
+
+.card-hand::-webkit-scrollbar {
+    display: none;
+}
+
+.basic-hand {
+    justify-content: center;
+}
+.sentence-hand {
+    justify-content: flex-start;
+}
+
+
+.playing-card {
+    position: relative;
+    flex: 0 0 132px;
+    width: 132px;
+    height: 190px;
+    margin-left: -44px;
+    padding: 16px 12px;
+	
+	cursor: pointer;
+	user-select: none;
+	appearance: none;
+
+    border: 3px solid #f6eaf1;
+    border-radius: 15px;
+    box-shadow:
+        0 10px 20px rgb(0 0 0 / 28%);
+    scroll-snap-align: center;
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease,
+        border-color 160ms ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.playing-card:first-child {
+    margin-left: 0;
+}
+
+.basic-playing-card {
+    color: #682541;
+    background:
+        linear-gradient(
+            145deg,
+            #fff9fc,
+            #f4dce8
+        );
+}
+
+.sentence-playing-card {
+    color: #292044;
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #e9e2f5
+        );
+}
+
+.playing-card:nth-child(odd) {
+    transform: rotate(-2deg);
+}
+
+.playing-card:nth-child(even) {
+    transform: rotate(2deg);
+}
+
+.playing-card:active {
+    z-index: 10;
+    transform:
+        translateY(-10px)
+        scale(1.04);
+}
+
+.playing-card.selected {
+    z-index: 5;
+    border-color: #ff5b98;
+    box-shadow:
+        0 0 0 3px rgb(255 91 152 / 28%),
+        0 14px 25px rgb(0 0 0 / 35%);
+    transform:
+        translateY(-14px)
+        rotate(0deg);
+}
+
+.card-type {
+    position: absolute;
+    top: 10px;
+    left: 11px;
+    font-size: 9px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    opacity: 0.65;
+}
+
+.card-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 1.55;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.card-symbol {
+    position: absolute;
+    right: 11px;
+    bottom: 8px;
+    color: #d94d82;
+    font-size: 22px;
+}
+
+.selected-mark {
+    position: absolute;
+    top: -11px;
+    right: -11px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 31px;
+    height: 31px;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    color: #ffffff;
+    background: #ed5d91;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 30%);
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.playing-card.selected .selected-mark {
+    display: flex;
+}
+
+/* =========================
+   チャットプレビュー
+   ========================= */
+
+.phone-screen {
+	overflow: hidden;
+    padding: 13px;
+    border: 4px solid #282232;
+    border-radius: 28px;
+    background: #f8f0f5;
+    box-shadow: 0 18px 38px rgb(0 0 0 / 25%);
+}
+
+.chat-area {
+    min-height: 220px;
+	max-height: 420px;
+	padding: 20px 8px;
+	overflow-y: auto;
+}
+
+.preview-empty {
+    margin: 70px 20px;
+    color: #766d78;
+    font-size: 13px;
+    line-height: 1.7;
+    text-align: center;
+}
+
+.preview-message {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-bottom: 11px;
+}
+
+.chat-bubble {
+    max-width: 88%;
+    padding: 11px 14px;
+    border-radius: 17px 17px 4px 17px;
+    color: #ffffff;
+    background: #d95487;
+    font-size: 14px;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.preview-order {
+    margin-top: 3px;
+    color: #9c8f98;
+    font-size: 9px;
+}
+/* =========================
+   長押しによる並べ替え
+   ========================= */
+
+.sentence-preview-message {
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.sentence-preview-message:active {
+    cursor: grabbing;
+}
+
+.preview-information {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.drag-guide {
+    padding: 3px 7px;
+    border-radius: 999px;
+    color: #7d6f79;
+    background: #e8dde4;
+    font-size: 9px;
+}
+
+/* 長押しが成立した文章 */
+.preview-chosen .chat-bubble {
+    box-shadow:
+        0 0 0 3px rgb(237 93 145 / 28%);
+}
+
+/* 移動前の場所を示す半透明表示 */
+.preview-ghost {
+    opacity: 0.35;
+}
+
+/* 実際に指で移動している文章 */
+.preview-dragging {
+    z-index: 100;
+    opacity: 0.95;
+}
+
+.preview-dragging .chat-bubble {
+    background: #ed5d91;
+    box-shadow:
+        0 12px 24px rgb(0 0 0 / 25%);
+    transform: scale(1.03);
+}
+
+/* SortableJSが生成する移動中のコピー */
+.sortable-fallback {
+    pointer-events: none;
+}
+
+
+
+/* =========================
+   送信ボタン
+   ========================= */
+
+.send-button {
+    display: block;
+    width: 100%;
+    min-height: 56px;
+    margin: 12px 0;
+    border: none;
+    border-radius: 18px;
+    color: #ffffff;
+    background: #ed5d91;
+    box-shadow:
+        0 8px 24px rgb(237 93 145 / 35%);
+    font-size: 16px;
+    font-weight: bold;
+	padding: 14px 18px;
+	cursor: pointer;
+	transition:
+	    transform 150ms ease,
+	    filter 150ms ease;
+
+}
+.send-button:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+
+.send-button:disabled {
+    color: #aaa1ac;
+    background: #5d5664;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* =========================
+   カード拡大モーダル
+   ========================= */
+
+.card-modal {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+	overflow-y: auto;
+
+}
+
+.card-modal.open {
+    display: flex;
+}
+
+.modal-background {
+    position: absolute;
+    inset: 0;
+    background: rgb(12 8 25 / 82%);
+    backdrop-filter: blur(6px);
+}
+
+.modal-content {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 340px);
+    text-align: center;
+    animation: card-open 180ms ease-out;
+}
+
+@keyframes card-open {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    z-index: 2;
+    top: -15px;
+    right: -8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 2px solid rgb(255 255 255 / 50%);
+    border-radius: 50%;
+    color: #ffffff;
+    background: #31263d;
+    font-size: 25px;
+}
+
+.large-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 230px;
+    height: 330px;
+    margin: 0 auto 22px;
+    padding: 35px 24px;
+    border: 5px solid #ffffff;
+    border-radius: 22px;
+    box-shadow:
+        0 24px 50px rgb(0 0 0 / 45%);
+}
+
+.large-card-basic {
+    color: #682541;
+    background:
+        linear-gradient(
+            145deg,
+            #fff9fc,
+            #f1ccdf
+        );
+}
+
+.large-card-sentence {
+    color: #292044;
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #ddd1ee
+        );
+}
+
+.large-card-type {
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.12em;
+    opacity: 0.6;
+}
+
+.large-card-text {
+    margin: 0;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.large-card-symbol {
+    position: absolute;
+    right: 20px;
+    bottom: 13px;
+    color: #d94d82;
+    font-size: 34px;
+}
+
+.modal-select-button {
+    width: 100%;
+    min-height: 54px;
+    border: none;
+    border-radius: 17px;
+    color: #ffffff;
+    background: #ed5d91;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.modal-select-button.remove-mode {
+    border: 1px solid rgb(255 255 255 / 45%);
+    color: #ffffff;
+    background: #51465e;
+}
+
+.modal-help {
+    margin: 12px 0 0;
+    color: #d2c8d8;
+    font-size: 11px;
+}
+
+
+/* =========================
+   送信結果画面
+   ========================= */
+
+.confirm-container {
+    padding-top: 48px;
+}
+
+.confirm-title {
+    margin-bottom: 10px;
+    font-size: 34px;
+}
+
+.confirm-description {
+    margin: 0;
+    color: #d9cfdf;
+    font-size: 14px;
+}
+
+.result-phone {
+    overflow: hidden;
+    border: 5px solid #282232;
+    border-radius: 30px;
+    background: #f8f0f5;
+    box-shadow:
+        0 20px 45px rgb(0 0 0 / 30%);
+}
+
+.result-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 74px;
+    padding: 12px 18px;
+    color: #2d2431;
+    background: #ffffff;
+    border-bottom: 1px solid #e8dde4;
+}
+
+.receiver-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    color: #ffffff;
+    background:
+        linear-gradient(
+            145deg,
+            #ed5d91,
+            #9b4c9c
+        );
+    font-size: 23px;
+}
+
+.receiver-name {
+    margin: 0 0 3px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.receiver-status {
+    margin: 0;
+    color: #8c7d88;
+    font-size: 10px;
+}
+
+.result-chat {
+    min-height: 360px;
+    padding: 24px 14px;
+    background:
+        linear-gradient(
+            180deg,
+            #f8f0f5,
+            #eee3ec
+        );
+}
+
+.result-message {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-bottom: 12px;
+}
+
+.read-label {
+    margin-top: 3px;
+    color: #998d96;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+}
+
+.confirm-actions {
+    margin-top: 30px;
+}
+/* =========================
+   告白履歴画面
+   ========================= */
+
+.history-container {
+    padding-top: 56px;
+}
+
+.history-header {
+    margin-bottom: 32px;
+}
+
+.history-list {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 32px;
+}
+
+.history-card {
+    padding: 20px;
+    border: 1px solid rgb(255 255 255 / 16%);
+    border-radius: 22px;
+    background: rgb(41 32 68 / 82%);
+    box-shadow: 0 12px 28px rgb(0 0 0 / 18%);
+    text-align: left;
+}
+
+.history-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.history-recipient {
+    margin: 0;
+    color: #ffd2e2;
+    font-size: 17px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.history-date {
+    flex-shrink: 0;
+    margin: 0;
+    color: #c9bfd0;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.history-messages {
+    display: grid;
+    justify-items: end;
+    gap: 8px;
+}
+
+.history-message {
+    width: fit-content;
+    max-width: 88%;
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 16px 16px 4px 16px;
+    color: #fff;
+    background: #d95487;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.opening-message {
+    background: #682541;
+}
+
+.history-empty {
+    margin: 40px 0;
+    padding: 28px 20px;
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-radius: 20px;
+    color: #c9bfd0;
+    background: rgb(41 32 68 / 70%);
+}
+
+.history-empty p {
+    margin: 0;
+}
+
+.history-back-button {
+    margin-bottom: 12px;
+}
+
+/* =========================
+   PCのマウス操作
+   ========================= */
+
+@media (hover: hover) and (pointer: fine) {
+
+    .start-button:hover,
+    .sub-button:hover,
+    .send-button:not(:disabled):hover,
+    .modal-select-button:hover {
+        filter: brightness(1.08);
+    }
+
+    .playing-card:not(.selected):hover {
+        z-index: 10;
+        transform:
+            translateY(-8px)
+            rotate(0deg);
+    }
+	.sentence-preview-message:hover .chat-bubble {
+	    filter: brightness(1.05);
+	}
+
+}
+
+
+/* =========================
+   小さいスマートフォン
+   ========================= */
+
+@media (max-width: 380px) {
+
+    .container {
+        padding-right: 16px;
+        padding-left: 16px;
+    }
+
+    .card-table {
+        margin-right: -16px;
+        margin-left: -16px;
+    }
+
+    .playing-card {
+        flex-basis: 122px;
+        width: 122px;
+        height: 176px;
+        margin-left: -40px;
+    }
+
+    .card-text {
+        font-size: 14px;
+    }
+
+    .large-card {
+        width: 210px;
+        height: 300px;
+    }
+
+    .large-card-text {
+        font-size: 20px;
+    }
+
+    .confirm-title {
+        font-size: 30px;
+    }
+}

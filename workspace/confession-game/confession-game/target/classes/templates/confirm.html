@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>送信完了</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<main class="container confirm-container">
+
+    <header class="game-header">
+
+        <p class="subtitle">
+            告白メッセージゲーム
+        </p>
+
+        <h1 class="confirm-title">
+            送信しました
+        </h1>
+
+        <p class="confirm-description">
+            あなたが作った告白メッセージ
+        </p>
+
+    </header>
+
+    <section class="result-phone">
+
+        <div class="result-header">
+
+            <div class="receiver-icon">
+                ♡
+            </div>
+
+            <div>
+                <p class="receiver-name"
+				th:text="${recipientName}">
+                	告白相手
+                </p>
+
+                <p class="receiver-status">
+                    オンライン
+                </p>
+            </div>
+
+        </div>
+
+        <div class="result-chat">
+
+            <div class="result-message">
+
+                <div class="chat-bubble"
+                     th:text="${opening}">
+                    あのさ
+                </div>
+
+                <span class="read-label">
+                    READ
+                </span>
+
+            </div>
+
+            <div th:each="sentence : ${sentences}"
+                 class="result-message">
+
+                <div class="chat-bubble"
+                     th:text="${sentence}">
+                    前からずっと好きで
+                </div>
+
+                <span class="read-label">
+                    READ
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <div class="confirm-actions">
+
+        <a class="start-button"
+           th:href="@{/game}">
+            もう一度作る
+        </a>
+
+        <a class="sub-button"
+           th:href="@{/}">
+            タイトルへ戻る
+        </a>
+
+    </div>
+
+</main>
+
+</body>
+</html>

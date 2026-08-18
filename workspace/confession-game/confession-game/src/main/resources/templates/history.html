@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>告白履歴</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <main class="container history-container">
+
+        <header class="history-header">
+
+            <p class="subtitle">
+                告白メッセージゲーム
+            </p>
+
+            <h1>告白履歴</h1>
+
+            <p class="description">
+                これまでに作成した告白文です
+            </p>
+
+        </header>
+
+        <!-- 履歴がない場合 -->
+        <section class="history-empty"
+                 th:if="${#lists.isEmpty(histories)}">
+
+            <p>
+                保存された告白履歴はありません。
+            </p>
+
+        </section>
+
+        <!-- 履歴がある場合 -->
+        <section class="history-list"
+                 th:unless="${#lists.isEmpty(histories)}">
+
+            <article class="history-card"
+                     th:each="history : ${histories}">
+
+                <div class="history-card-header">
+
+                    <p class="history-recipient"
+                       th:text="${history.recipientName}">
+                        告白相手
+                    </p>
+
+                    <p class="history-date"
+                       th:text="${history.createdAt}">
+                        2026/08/18 20:00
+                    </p>
+
+                </div>
+
+                <div class="history-messages">
+
+                    <p class="history-message opening-message"
+                       th:text="${history.openingText}">
+                        あのさ
+                    </p>
+
+                    <p class="history-message"
+                       th:each="sentence : ${history.sentences}"
+                       th:text="${sentence}">
+                        前からずっと好きで
+                    </p>
+
+                </div>
+
+            </article>
+
+        </section>
+
+        <a class="sub-button history-back-button"
+           th:href="@{/game}">
+            新しい告白文を作る
+        </a>
+
+        <a class="sub-button"
+           th:href="@{/}">
+            タイトルへ戻る
+        </a>
+
+    </main>
+
+</body>
+</html>

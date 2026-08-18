@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>告白メッセージを作る</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+   
+</head>
+
+<body>
+
+<main class="container game-container">
+
+    <header class="game-header">
+        <p class="subtitle">
+            告白メッセージゲーム
+        </p>
+
+        <h1>何て送る？</h1>
+
+        <p class="screen-guide">
+            カードをタップすると拡大できます
+        </p>
+    </header>
+	
+	<!-- 告白相手の名前 -->
+	<section class="recipient-section">
+
+	    <label for="recipient-name"
+	           class="recipient-label">
+	        告白する相手
+	    </label>
+
+	    <input id="recipient-name"
+	           class="recipient-input"
+	           type="text"
+	           maxlength="20"
+	           placeholder="例：さくら"
+	           autocomplete="off">
+
+	    <p class="recipient-help">
+	        「〇〇」の部分に入力した名前が入ります
+	    </p>
+
+	</section>
+
+
+    <!-- 基本カード -->
+    <section class="card-section">
+
+        <div class="section-title-row">
+            <h2>① 最初の言葉</h2>
+
+            <span class="selection-rule">
+                1枚選択
+            </span>
+        </div>
+
+        <div class="card-table">
+
+            <div class="card-hand basic-hand">
+
+                <button th:each="basicCard : ${basicCards}"
+                        type="button"
+                        class="playing-card basic-playing-card"
+                        data-kind="basic"
+                        th:data-text="${basicCard}"
+                        th:attr="aria-label=${basicCard}">
+
+                    <span class="card-type">
+                        OPENING
+                    </span>
+
+                    <span class="card-text"
+                          th:text="${basicCard}">
+                        あのさ
+                    </span>
+
+                    <span class="card-symbol">
+                        ♡
+                    </span>
+
+                    <span class="selected-mark">
+                        ✓
+                    </span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- 文章カード -->
+    <section class="card-section">
+
+        <div class="section-title-row">
+            <h2>② 文章カード</h2>
+
+            <span class="selection-rule">
+                好きな枚数
+            </span>
+        </div>
+
+        <p class="help-text">
+            横にスワイプしてカードを確認できます
+        </p>
+
+        <div class="card-table">
+
+            <div class="card-hand sentence-hand">
+
+                <button th:each="sentenceCard : ${sentenceCards}"
+                        type="button"
+                        class="playing-card sentence-playing-card"
+                        data-kind="sentence"
+                        th:data-text="${sentenceCard}"
+                        th:attr="aria-label=${sentenceCard}">
+
+                    <span class="card-type">
+                        MESSAGE
+                    </span>
+
+                    <span class="card-text"
+                          th:text="${sentenceCard}">
+                        前からずっと好きで
+                    </span>
+
+                    <span class="card-symbol">
+                        ✦
+                    </span>
+
+                    <span class="selected-mark">
+                        ✓
+                    </span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- 選択状況 -->
+    <section class="card-section">
+
+        <div class="section-title-row">
+            <h2>③ 作成中の告白</h2>
+
+            <span id="selected-count"
+                  class="selection-rule">
+                0枚使用
+            </span>
+        </div>
+
+        <div class="phone-screen">
+
+            <div id="message-preview"
+                 class="chat-area">
+
+                <p class="preview-empty">
+                    カードを選ぶと、ここに告白文が表示されます
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <button id="send-button"
+            type="button"
+            class="send-button"
+            disabled>
+        この内容で送信する
+    </button>
+
+    <a class="sub-button"
+       th:href="@{/}">
+        タイトルへ戻る
+    </a>
+
+</main>
+
+<!-- カード拡大画面 -->
+<div id="card-modal"
+     class="card-modal"
+     aria-hidden="true">
+
+    <div class="modal-background"
+         data-close-modal>
+    </div>
+
+    <div class="modal-content"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="modal-card-text">
+
+        <button type="button"
+                class="modal-close"
+                data-close-modal
+                aria-label="閉じる">
+            ×
+        </button>
+
+        <div id="large-card"
+             class="large-card">
+
+            <span id="modal-card-type"
+                  class="large-card-type">
+                MESSAGE
+            </span>
+
+            <p id="modal-card-text"
+               class="large-card-text">
+                カードの文章
+            </p>
+
+            <span id="modal-card-symbol"
+                  class="large-card-symbol">
+                ♡
+            </span>
+
+        </div>
+
+        <button id="select-card-button"
+                type="button"
+                class="modal-select-button">
+            このカードを使う
+        </button>
+
+        <p class="modal-help">
+            選択した順番でメッセージになります
+        </p>
+
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<script th:src="@{/js/game.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>送信する勇気</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<main class="container">
+
+    <p class="subtitle">
+        告白メッセージゲーム
+    </p>
+
+    <h1>送信する勇気</h1>
+
+    <p class="description">
+        カードを組み合わせて、<br>
+        あなただけの告白メッセージを作ろう。
+    </p>
+
+    <a class="start-button"
+       th:href="@{/game}">
+        ゲームを始める
+    </a>
+
+    <p class="development">
+        現在開発中
+    </p>
+
+</main>
+
+</body>
+</html>
