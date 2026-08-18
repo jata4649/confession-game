@@ -30,6 +30,11 @@ public class RoomGameService {
     );
 
     private final Map<String, Room> rooms = new HashMap<>();
+    private final RoomRealtimeGateway realtimeGateway;
+
+    public RoomGameService(RoomRealtimeGateway realtimeGateway) {
+        this.realtimeGateway = realtimeGateway;
+    }
 
     public synchronized Map<String, Object> create(Map<String, Object> request) {
         String name = requiredName(request.get("name"));
@@ -48,7 +53,7 @@ public class RoomGameService {
         if (room.phase != Phase.WAITING) throw conflict("ゲーム開始後は参加できません。");
         if (room.players.size() >= room.maxPlayers) throw conflict("このルームは満員です。");
         Player player = room.addPlayer(requiredName(request.get("name")), false);
-        room.touch();
+        changed(room);
         return Map.of("roomId", room.id, "playerId", player.id);
     }
 
@@ -65,6 +70,7 @@ public class RoomGameService {
         if (room.players.size() < 2) throw conflict("2人以上で開始できます。");
         if (room.phase != Phase.WAITING) throw conflict("このゲームはすでに始まっています。");
         room.startRound();
+        realtimeGateway.broadcast(room.id);
     }
 
     public synchronized void submit(String roomId, Map<String, Object> request) {
@@ -77,6 +83,7 @@ public class RoomGameService {
         room.confessions.put(actor.id, new ArrayList<>(cards));
         room.touch();
         if (room.confessions.size() == room.players.size() - 1) room.beginReading();
+        realtimeGateway.broadcast(room.id);
     }
 
     public synchronized void nextSentence(String roomId, Map<String, Object> request) {
@@ -97,6 +104,7 @@ public class RoomGameService {
             room.phase = Phase.JUDGING;
         }
         room.touch();
+        realtimeGateway.broadcast(room.id);
     }
 
     public synchronized void skipDisconnected(String roomId, Map<String, Object> request) {
@@ -115,6 +123,7 @@ public class RoomGameService {
         room.confessions.put(skipped.id, List.of("今回は通信が途切れてしまいました。", "また次の告白で会おうね。"));
         room.touch();
         if (room.confessions.size() == room.players.size() - 1) room.beginReading();
+        realtimeGateway.broadcast(room.id);
     }
 
     public synchronized void chooseWinner(String roomId, Map<String, Object> request) {
@@ -126,7 +135,7 @@ public class RoomGameService {
         room.winnerId = winnerId;
         player(room, winnerId).points++;
         room.phase = Phase.ROUND_RESULT;
-        room.touch();
+        changed(room);
     }
 
     public synchronized void nextRound(String roomId, Map<String, Object> request) {
@@ -140,6 +149,12 @@ public class RoomGameService {
         } else {
             room.startRound();
         }
+        realtimeGateway.broadcast(room.id);
+    }
+
+    private void changed(Room room) {
+        room.touch();
+        realtimeGateway.broadcast(room.id);
     }
 
     private Room room(String roomId) {

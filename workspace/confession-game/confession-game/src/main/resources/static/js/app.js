@@ -4,7 +4,7 @@
   let session = JSON.parse(localStorage.getItem(sessionKey) || 'null');
   let state = null;
   let selected = [];
-  let timer;
+  let timer, socket, socketRoom, reconnectTimer;
   const audioPrefsKey = 'kotoba-kokuhaku-audio';
   let audioPrefs = JSON.parse(localStorage.getItem(audioPrefsKey) || '{"se":0.65,"bgm":0.22}');
   let audioContext, bgmTimer, bgmGain;
@@ -14,7 +14,7 @@
   const message = text => `<div class="toast">${escape(text)}</div>`;
   const api = async (url, options = {}) => {
     const response = await fetch(url, {headers: {'Content-Type':'application/json'}, ...options});
-    if (!response.ok) { const text = await response.text(); let error; try { error = JSON.parse(text).detail; } catch (_) {} throw new Error(error || '通信に失敗しました。'); }
+    if (!response.ok) { const text = await response.text(); let detail; try { detail = JSON.parse(text).detail; } catch (_) {} const error = new Error(detail || '通信に失敗しました。'); error.status = response.status; throw error; }
     return response.status === 204 ? null : response.json();
   };
   const saveSession = data => { session = data; localStorage.setItem(sessionKey, JSON.stringify(data)); };
@@ -40,7 +40,21 @@
     playNote(); bgmTimer = setInterval(playNote, 760);
   }
   function saveAudioPrefs() { localStorage.setItem(audioPrefsKey, JSON.stringify(audioPrefs)); setBgm(state?.phase === 'READING'); }
-  function showScreen(name) { clearInterval(timer); stopBgm(); state = null; app.innerHTML = ''; app.append(template(`${name}-template`)); }
+  function disconnectRealtime() {
+    clearTimeout(reconnectTimer); socketRoom = null;
+    if (socket) { socket.onclose = null; socket.close(); socket = null; }
+  }
+  function connectRealtime() {
+    if (!session || !('WebSocket' in window)) return;
+    if (socketRoom === session.roomId && socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) return;
+    if (socket) socket.close(); socketRoom = session.roomId;
+    const scheme = location.protocol === 'https:' ? 'wss' : 'ws';
+    socket = new WebSocket(`${scheme}://${location.host}/ws/room?roomId=${encodeURIComponent(session.roomId)}`);
+    socket.onopen = () => refresh();
+    socket.onmessage = () => refresh();
+    socket.onclose = () => { if (session?.roomId === socketRoom) reconnectTimer = setTimeout(connectRealtime, 1800); };
+  }
+  function showScreen(name) { clearInterval(timer); disconnectRealtime(); stopBgm(); state = null; app.innerHTML = ''; app.append(template(`${name}-template`)); }
   function toast(text) { app.insertAdjacentHTML('beforeend', message(text)); setTimeout(() => app.querySelector('.toast')?.remove(), 3500); }
 
   async function createRoom() {
@@ -55,8 +69,12 @@
   async function command(path, body = {}) { await api(`/api/rooms/${session.roomId}/${path}`, {method:'POST', body:JSON.stringify({...body, playerId:session.playerId})}); await refresh(); }
   async function refresh() {
     if (!session) return showScreen('landing');
-    try { state = await api(`/api/rooms/${session.roomId}?playerId=${session.playerId}`); renderRoom(); }
-    catch (error) { localStorage.removeItem(sessionKey); session = null; showScreen('landing'); toast(error.message); }
+    try { state = await api(`/api/rooms/${session.roomId}?playerId=${session.playerId}`); connectRealtime(); renderRoom(); }
+    catch (error) {
+      if (error.status === 403 || error.status === 404) { localStorage.removeItem(sessionKey); session = null; showScreen('landing'); toast(error.message); return; }
+      toast('通信を再接続中です…');
+      clearInterval(timer); timer = setInterval(refresh, 1800);
+    }
   }
 
   function playerRows() { return state.players.map(p => `<li><span class="presence ${p.connected ? '' : 'offline'}"></span><b>${escape(p.name)}</b>${p.host ? '<em>HOST</em>' : ''}<span class="score">${p.points} pt</span>${state.phase === 'COMPOSING' ? `<small>${p.submitted ? '提出済み' : p.connected ? '作成中' : '通信切断中'}</small>` : ''}${state.isHost && p.canSkip ? `<button class="skip" data-skip="${p.id}">スキップ</button>` : ''}</li>`).join(''); }
@@ -73,7 +91,7 @@
     if (state.phase === 'GAME_RESULT') phase.innerHTML = resultView(true);
     app.insertAdjacentHTML('beforeend', audioPanel());
     setBgm(state.phase === 'READING');
-    timer = setInterval(refresh, 1300);
+    timer = setInterval(refresh, socket?.readyState === WebSocket.OPEN ? 15000 : 1300);
   }
   function waitingView() { return `<div class="hero-card"><div class="room-code"><span>招待コード</span><strong>${state.roomId}</strong><button class="copy" data-action="copy">コピー</button></div><p>参加者がそろったら、ホストがゲームを開始します。</p></div><section class="section"><div class="section-head"><h3>参加者 ${state.players.length}人</h3><span class="status-dot">同期中</span></div><ul class="players">${playerRows()}</ul></section>${state.isHost ? action({text:'ゲームを開始する', command:'start'}) : '<p class="waiting-note">ホストの開始を待っています…</p>'}`; }
   function composingView() {
@@ -93,7 +111,7 @@
       if (target.dataset.action === 'home') return showScreen('landing'); if (target.dataset.action === 'show-create') return showScreen('create'); if (target.dataset.action === 'show-join') return showScreen('join');
       if (target.dataset.action === 'audio') return document.querySelector('#audio-panel').classList.toggle('open'); if (target.dataset.action === 'close-audio') return document.querySelector('#audio-panel').classList.remove('open');
       if (target.dataset.action === 'create') return await createRoom(); if (target.dataset.action === 'join') return await joinRoom();
-      if (target.dataset.action === 'leave') { clearInterval(timer); localStorage.removeItem(sessionKey); session=null; return showScreen('landing'); }
+      if (target.dataset.action === 'leave') { clearInterval(timer); disconnectRealtime(); localStorage.removeItem(sessionKey); session=null; return showScreen('landing'); }
       if (target.dataset.action === 'copy') { await navigator.clipboard.writeText(state.roomId); return toast('招待コードをコピーしました'); }
       if (target.dataset.card !== undefined) { const card = state.hand[Number(target.dataset.card)]; selected = selected.includes(card) ? selected.filter(x => x !== card) : selected.length < state.cardLimit ? [...selected, card] : selected; return renderRoom(); }
       if (target.dataset.remove !== undefined) { selected.splice(Number(target.dataset.remove), 1); return renderRoom(); }
